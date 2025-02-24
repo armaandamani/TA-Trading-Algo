@@ -2,16 +2,14 @@
 
 This Pine Script indicator (with the current parameters) was designed primarily for trading Bitcoin on TradingView with strategy automation via 3Commas and your cryptocurrency exchange account API (note that 3Commas only supports centralized exchanges). For this project, I created a custom signal bot within the 3Commas platform. The script sends JSON webhook signals from TradingView's `alert()` function calls to 3Commas. These signals include a dynamically calculated buy quantity (in the trading pair's base currency) and the current market price, enabling automated trading for cryptocurrencies.
 
-The indicator combines multiple technical indicators—Stochastic RSI, MACD, Money Flow Index (MFI), and Bollinger Bands—to identify trends, generate entry and exit signals, and manage multiple sub-positions. The script dynamically adjusts position sizes based on market conditions and remaining equity, making it a versatile tool for day/swing trading.
+The indicator combines multiple technical indicators —– Stochastic RSI, MACD, Money Flow Index (MFI), and Bollinger Bands –— to identify trends, generate entry and exit signals, and manage multiple sub-positions. The script dynamically adjusts position sizes based on market conditions and remaining equity, making it a versatile tool for day/swing trading.
 
-## Overview
+The strategy uses:
 
-The "Bitcoin Swing Trading Indicator" is a sophisticated swing trading tool that leverages a combination of technical indicators to generate buy and sell signals for Bitcoin (or any cryptocurrency supported by your exchange and 3Commas). These signals are transmitted to 3Commas via JSON webhooks for automated trade execution. The strategy uses:
-
-- **Stochastic RSI** for overbought/oversold conditions and entry/exit triggers.
-- **MACD** to determine bullish or bearish trends.
-- **Money Flow Index (MFI)** to confirm momentum and trend strength.
-- **Bollinger Bands** (two sets with different periods) for additional entry and exit signals.
+- **Stochastic RSI** for very short-term (~120-minute) overbought/oversold conditions and entry/exit triggers.
+- **MACD** to determine medium-term (~24-hour) bullish or bearish trends.
+- **Money Flow Index (MFI)** to confirm medium-term (intra-day) momentum and trend strength.
+- **Bollinger Bands** (two sets with different periods) for additional entry and exit signals during highly oversold markets.
 
 The script manages multiple sub-positions, tracks remaining equity, and adjusts position sizes dynamically based on trend conditions and predefined parameters. It’s designed to operate in real-time bars only, ensuring signals align with live market data.
 
@@ -24,7 +22,7 @@ Sets up foundational variables and authentication for 3Commas integration.
 
 #### Details
 - **3Commas Credentials**: `SECRET` and `BOT_UUID` are defined for secure communication with the 3Commas bot.
-- **Remaining Equity**: Initialized at `1000` (assumed to be in the quote currency, e.g., USD), tracking available funds for trading.
+- **Remaining Equity**: Initialized at `$X` (assumed to be the total amount of capital the bot should trade with in the quote currency, e.g., USD).
 - **Entry Percentages**:
   - `BASE_PERCENTAGE_BULLISH = 35.0`: Base position size percentage in bullish trends.
   - `BASE_PERCENTAGE_BEARISH = 15.0`: Base position size percentage in bearish trends.
@@ -42,7 +40,7 @@ Manages sub-positions and prevents redundant alerts.
   - `bullishEntryPrices` and `bullishEntrySizes`: Track entry prices and sizes for bullish trend positions.
 - **Bollinger Variables**: `bollingerPrice` and `bollingerSize` store the entry price and size for Bollinger-based trades.
 - **Counters**: `x` (bullish) and `y` (bearish) track the number of open positions.
-- **Alert Flags**: `bollingerBuyAlertFired` and `bollingerSellAlertFired` prevent repeated buy/sell alerts for Bollinger trades.
+- **Alert Flags**: `bollingerBuyAlertFired` and `bollingerSellAlertFired` limit the bot to one open bollinger position at a time.
 
 ### 3. Technical Indicators
 
@@ -52,7 +50,7 @@ Calculates and plots indicators for trend identification and signal generation.
 #### Details
 - **Stochastic RSI**:
   - Parameters: `SMOOTH_K = 6`, `SMOOTH_D = 6`, `LENGTH_RSI = 28`, `LENGTH_STOCH = 28`.
-  - Plots `K` (blue) and `D` (orange) lines with custom overbought (`25`) and oversold (`10`) levels.
+  - Plots `K` (blue) and `D` (orange) lines with conservative overbought (`25`) and oversold (`10`) levels.
 - **MACD**:
   - Parameters: `FAST_LEN = 216`, `SLOW_LEN = 432`, `SIGNAL_LEN = 144`.
   - Plots `macdLine` (blue) and `macdSignal` (orange) to determine trend direction.
@@ -132,4 +130,4 @@ Users can tweak the following parameters to suit their trading style:
 
 ## Disclaimer
 
-This script is provided for educational purposes only and does not constitute financial advice. Cryptocurrency trading involves significant risks, including the potential loss of capital. Test the script thoroughly in a demo environment before using it with real funds.
+This script is provided for educational purposes only and does not constitute financial advice. Cryptocurrency trading involves significant risks, including the potential loss of capital. Test the script thoroughly in a demo environment before using it with real funds. Though, please understand that this script will not provide accurate results during backtesting.
